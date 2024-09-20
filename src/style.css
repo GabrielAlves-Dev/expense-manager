@@ -94,3 +94,8 @@ h3 {
   font-size: 1.2rem;
   text-align: center;
 }
+
+.error {
+  color: red; /* Cor vermelha */
+  margin-left: 5px; /* Espaço entre o label e o asterisco */
+}
