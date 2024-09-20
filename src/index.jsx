@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './style.css';
 
 function App() {
+
   // Carrega os dados já salvos no localStorage do navegador, se não houver nenhum dado ele usa uma lista vazia.
   const [gastos, setGastos] = useState(() => {
     const savedGastos = localStorage.getItem('gastos');
@@ -22,18 +23,21 @@ function App() {
 
     const dataHoje = new Date().toISOString().split('T')[0]; // Data de hoje
 
-    if (nome && data && valor) {
-      if (data > dataHoje) { // Verifica se a data
-        alert('Não é permitido inserir gastos com data futura.');
-        return;
-      }
-      const novoGasto = { nome, data, valor: parseFloat(valor) };
-      
-      setGastos([...gastos, novoGasto]);
-      setNome('');
-      setData('');
-      setValor('');
+    if (!nome || !data || !valor) {
+      alert('ERROR: Preencha todos os campos!');
+      return;
     }
+
+    if (data > dataHoje) { // Verifica se a data
+      alert('ERROR: Não é permitido inserir gastos com uma data futura.');
+      return;
+    }
+    const novoGasto = { nome, data, valor: parseFloat(valor) };
+    
+    setGastos([...gastos, novoGasto]);
+    setNome('');
+    setData('');
+    setValor('');
   };
 
   // DELETAR GASTO
@@ -45,9 +49,20 @@ function App() {
   // TODOS OS GASTOS
   const totalGasto = gastos.reduce((total, gasto) => total + gasto.valor, 0);
 
+  // Função para formatar a data no padrão brasileiro (DD/MM/YYYY)
+  const formatarData = (data) => {
+    const partes = data.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`; // Retorna a data no formato DD/MM/YYYY
+  };
+
+  // Função para formatar o valor para o padrão brasileiro (R$ X,XX)
+  const formatarValor = (valor) => {
+    return valor.toFixed(2).replace('.', ','); // Converte para string e substitui o ponto pela vírgula
+  };
+
   return (
     <div className="App">
-      <h1>Controle de Gastos</h1>
+      <h1>Gerenciador de Gastos</h1>
 
       <form onSubmit={adicionarGasto}>
         <div>
@@ -81,15 +96,19 @@ function App() {
 
       <h2>Todos os Gastos</h2>
       <ul>
-        {gastos.map((gasto, index) => (
-          <li key={index}>
-            {gasto.nome} - {gasto.data} - R$ {gasto.valor.toFixed(2)}
-            <button onClick={() => removerGasto(index)}>Deletar</button>
-          </li>
-        ))}
+        {gastos.length === 0 ? (
+          <li>Nenhum gasto inserido.</li>
+        ) : (
+          gastos.map((gasto, index) => (
+            <li key={index}>
+              {gasto.nome} - {formatarData(gasto.data)} - R$ {formatarValor(gasto.valor)}
+              <button onClick={() => removerGasto(index)}>Deletar</button>
+            </li>
+          ))
+        )}
       </ul>
 
-      <h3>Total Gastos: R$ {totalGasto.toFixed(2)}</h3>
+      <h3>Total Gastos: R$ {formatarValor(totalGasto)}</h3>
     </div>
   );
 }
