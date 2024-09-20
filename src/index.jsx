@@ -12,7 +12,6 @@ function App() {
   const [data, setData] = useState('');
   const [valor, setValor] = useState('');
 
-  // Efeito para salvar os gastos no localStorage sempre que eles mudarem
   useEffect(() => {
     localStorage.setItem('gastos', JSON.stringify(gastos));
   }, [gastos]);
@@ -21,10 +20,10 @@ function App() {
   const adicionarGasto = (e) => {
     e.preventDefault();
 
-    const dataHoje = new Date().toISOString().split('T')[0]; // Obtém a data de hoje no formato YYYY-MM-DD
+    const dataHoje = new Date().toISOString().split('T')[0]; // Data de hoje
 
     if (nome && data && valor) {
-      if (data > dataHoje) { // Verifica se a data é posterior à data de hoje
+      if (data > dataHoje) { // Verifica se a data
         alert('Não é permitido inserir gastos com data futura.');
         return;
       }
@@ -37,13 +36,13 @@ function App() {
     }
   };
 
-  // Deletar Gasto
+  // DELETAR GASTO
   const removerGasto = (index) => {
     const novosGastos = gastos.filter((_, i) => i !== index);
     setGastos(novosGastos);
   };
 
-  // Total de Gastos
+  // TODOS OS GASTOS
   const totalGasto = gastos.reduce((total, gasto) => total + gasto.valor, 0);
 
   return (
